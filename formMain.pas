@@ -1,7 +1,7 @@
 {
 ******************************************************
   Monkey Island Image Converter
-  Copyright (c) 2010 - 2011 Bgbennyboy
+  Copyright (c) 2010 - 2012 Bgbennyboy
   Http://quick.mixnmojo.com
 ******************************************************
 }
@@ -29,6 +29,7 @@ type
     panelProgress: TPanel;
     Image2: TImage;
     JvGIFAnimator1: TJvGIFAnimator;
+    radiogroupPlatformSelect: TRadioGroup;
     procedure JvDragDrop1Drop(Sender: TObject; Pos: TPoint; Value: TStrings);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -36,8 +37,8 @@ type
 
   private
     FileList: TStringList;
-    function RepackMonkey1(FileName: string; SourceDir: string; DestDir: string): boolean;
-    function RepackMonkey2(FileName: string; SourceDir: string; DestDir: string): boolean;
+    function RepackMonkey1(FileName: string; SourceDir: string; DestDir: string; BigEndian: boolean = false): boolean;
+    function RepackMonkey2(FileName: string; SourceDir: string; DestDir: string; BigEndian: boolean = false): boolean;
     function PurgeFileListOfNonDDS(FileList: TStrings): boolean;
     function ExtractPartialPath(FileName, RootDir: string): string;
     procedure ShowProgress(Running: boolean);
@@ -56,6 +57,10 @@ implementation
 { TfrmMain }
 
 
+function SwapEndianDWord(Value: integer): integer; register;
+asm
+  bswap eax
+end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
@@ -115,6 +120,7 @@ procedure TfrmMain.JvDragDrop1Drop(Sender: TObject; Pos: TPoint;
   Value: TStrings);
 var
   I, J: Integer;
+  IsBigEndian: boolean;
 begin
   FileList.Clear;
 
@@ -165,11 +171,18 @@ begin
   ShowProgress(true);
   EnableDisableButtonsGlobal(false);
   try
+    case radiogroupPlatformSelect.ItemIndex of
+      0:  IsBigEndian := false;
+      1:  IsBigEndian := true;
+      else
+          IsBigEndian := false;
+    end;
+
     for I := 0 to FileList.Count - 1 do
     begin
       case radiogroupGameSelect.ItemIndex of
-        0:  RepackMonkey1(FileList.Names[i], FileList.ValueFromIndex[i], EditPath.Text);
-        1:  RepackMonkey2(FileList.Names[i], FileList.ValueFromIndex[i] ,EditPath.Text);
+        0:  RepackMonkey1(FileList.Names[i], FileList.ValueFromIndex[i], EditPath.Text, IsBigEndian);
+        1:  RepackMonkey2(FileList.Names[i], FileList.ValueFromIndex[i] ,EditPath.Text, IsBigEndian);
       end;
 
       Application.ProcessMessages;
@@ -205,7 +218,7 @@ begin
   Result := StrAfter( IncludeTrailingPathDelimiter(RootDir), ExtractFilePath(FileName));
 end;
 
-function TfrmMain.RepackMonkey1(FileName, SourceDir, DestDir: string): boolean;
+function TfrmMain.RepackMonkey1(FileName, SourceDir, DestDir: string; BigEndian: boolean = false): boolean;
 var
   Width, Height: integer;
   Temp: DWord;
@@ -227,6 +240,10 @@ begin
     SourceFile.Position := 84; //FOURCC
     SourceFile.Read(Temp, 4); // Store the FOURCC for later
     SourceFile.Position := 128; //End of the dds header
+
+    //Correct for big endian
+    if BigEndian then Width := SwapEndianDWord(Width);
+    if BigEndian then Height := SwapEndianDWord(Height);
 
     NewDestDir :=  IncludeTrailingPathDelimiter(DestDir) + ExtractPartialPath( FileName, SourceDir);
     ForceDirectories( NewDestDir );
@@ -255,7 +272,7 @@ begin
   end;
 end;
 
-function TfrmMain.RepackMonkey2(FileName, SourceDir, DestDir: string): boolean;
+function TfrmMain.RepackMonkey2(FileName, SourceDir, DestDir: string; BigEndian: boolean = false): boolean;
 var
   Width, Height: integer;
   Temp: DWord;
@@ -277,6 +294,10 @@ begin
     SourceFile.Position := 84; //FOURCC
     SourceFile.Read(Temp, 4); // Store the FOURCC for later
     SourceFile.Position := 128; //End of the dds header
+
+    //Correct for big endian
+    if BigEndian then Width := SwapEndianDWord(Width);
+    if BigEndian then Height := SwapEndianDWord(Height);
 
     NewDestDir :=  IncludeTrailingPathDelimiter(DestDir) + ExtractPartialPath( FileName, SourceDir);
     ForceDirectories( NewDestDir );

@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Monkey Island Image Converter'
-  ClientHeight = 258
+  ClientHeight = 310
   ClientWidth = 329
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -47,15 +47,16 @@ object frmMain: TfrmMain
     Left = 0
     Top = 0
     Width = 329
-    Height = 258
+    Height = 310
     Align = alClient
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 3
     Visible = False
+    ExplicitHeight = 258
     object JvGIFAnimator1: TJvGIFAnimator
       Left = 0
-      Top = 127
+      Top = 179
       Width = 329
       Height = 131
       AsyncDrawing = True
@@ -3090,7 +3091,7 @@ object frmMain: TfrmMain
   end
   object panelDragDrop: TPanel
     Left = 8
-    Top = 103
+    Top = 156
     Width = 313
     Height = 147
     TabOrder = 2
@@ -3104,14 +3105,26 @@ object frmMain: TfrmMain
       Caption = 'Folders and sub-folders will be searched for .dds files.'
       Layout = tlCenter
       WordWrap = True
-      ExplicitWidth = 259
-      ExplicitHeight = 13
+      ExplicitHeight = 112
     end
+  end
+  object radiogroupPlatformSelect: TRadioGroup
+    Left = 8
+    Top = 102
+    Width = 313
+    Height = 48
+    Caption = 'What platform?'
+    Columns = 2
+    ItemIndex = 0
+    Items.Strings = (
+      'Pc'
+      'Xbox 360')
+    TabOrder = 4
   end
   object JvDragDrop1: TJvDragDrop
     DropTarget = panelDragDrop
     OnDrop = JvDragDrop1Drop
-    Left = 168
+    Left = 144
     Top = 104
   end
   object dlgBrowseForFolder: TJvBrowseForFolderDialog
