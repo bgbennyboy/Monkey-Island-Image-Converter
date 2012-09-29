@@ -193,8 +193,6 @@ begin
     EnableDisableButtonsGlobal(true);
     MessageBeep(0);
   end;
-
-//TODO WHAT ABOUT BIG ENDIAN?
 end;
 
 
