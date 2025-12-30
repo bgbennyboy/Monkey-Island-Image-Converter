@@ -1,8 +1,8 @@
 {
 ******************************************************
   Monkey Island Image Converter
-  Copyright (c) 2010 - 2011 Bgbennyboy
-  Http://quick.mixnmojo.com
+  Copyright (c) 2010 - 2026 Bennyboy
+  Http://quickandeasysoftware.net
 ******************************************************
 }
 

@@ -1,8 +1,8 @@
 {
 ******************************************************
   Monkey Island Image Converter
-  Copyright (c) 2010 - 2012 Bgbennyboy
-  Http://quick.mixnmojo.com
+  Copyright (c) 2010 - 2026 Bennyboy
+  Http://quickandeasysoftware.net
 ******************************************************
 }
 
@@ -15,13 +15,13 @@ uses
   Dialogs, StdCtrls, ExtCtrls, JvExControls, JvSpeedButton, JvComponentBase,
   JvDragDrop, JvBaseDlg, JvBrowseFolder, pngimage, JvGIFCtrl, JvAnimatedImage,
 
-  JCLFileUtils, uCustomZLibExGZ, JCLSysInfo, JCLStrings;
+  JCLFileUtils, uCustomZLibExGZ, JCLSysInfo, JCLStrings, Vcl.Mask,
+  System.ImageList, Vcl.ImgList, ImagingComponents;
 
 type
   TfrmMain = class(TForm)
     radiogroupGameSelect: TRadioGroup;
     EditPath: TLabeledEdit;
-    btnOpen: TJvSpeedButton;
     JvDragDrop1: TJvDragDrop;
     panelDragDrop: TPanel;
     Label1: TLabel;
@@ -30,6 +30,9 @@ type
     Image2: TImage;
     JvGIFAnimator1: TJvGIFAnimator;
     radiogroupPlatformSelect: TRadioGroup;
+    FileOpenDialogFolder: TFileOpenDialog;
+    btnOpen: TButton;
+    ImageListLarge: TImageList;
     procedure JvDragDrop1Drop(Sender: TObject; Pos: TPoint; Value: TStrings);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -65,11 +68,11 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   FileList := TStringList.Create;
-  dlgBrowseforfolder.RootDirectory:=fdDesktopDirectory;
-  dlgBrowseforfolder.RootDirectoryPath:=GetDesktopDirectoryFolder;
-  EditPath.Text:=GetDesktopDirectoryFolder;
+  //dlgBrowseforfolder.RootDirectory:=fdDesktopDirectory;
+  //dlgBrowseforfolder.RootDirectoryPath:=GetDesktopDirectoryFolder;
+  //EditPath.Text:=GetDesktopDirectoryFolder;
 
-  Label1.Caption := 'Drag and drop files or folders here' + #13 + 'Folders and sub-folders will be searched for .dds files.';
+  Label1.Caption := 'Drag and drop files or folders here' + #13#13 + 'Folders and sub-folders will be searched for .dds files.';
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
@@ -199,8 +202,16 @@ end;
 
 procedure TfrmMain.btnOpenClick(Sender: TObject);
 begin
-  if dlgBrowseForFolder.Execute then
-    editPath.Text:=dlgBrowseForFolder.Directory;
+  if Win32MajorVersion >= 6 then //Vista and above
+  begin
+    if FileOpenDialogFolder.Execute then
+      editPath.Text := FileOpenDialogFolder.FileName;
+  end
+  else
+  begin
+    if dlgBrowseForFolder.Execute then
+      editPath.Text := dlgBrowseForFolder.Directory;
+  end;
 end;
 
 procedure TfrmMain.EnableDisableButtonsGlobal(Value: boolean);
